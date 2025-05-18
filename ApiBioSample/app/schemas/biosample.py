@@ -13,3 +13,10 @@ class BiosampleSchema(BaseModel):
     date: str
     operator: str
     comments: List[CommentSchema] = []
+
+class PaginatedBiosampleSchema(BaseModel):
+    data:List[BiosampleSchema]
+    total: int
+    page_index: int
+    page_size: int
+    page_total: int

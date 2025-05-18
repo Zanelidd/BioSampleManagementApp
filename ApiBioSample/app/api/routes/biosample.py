@@ -1,12 +1,14 @@
+from math import floor
 from typing import List
 
-from fastapi import APIRouter, HTTPException,Response
+from fastapi import APIRouter, HTTPException, Response
 from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 from sqlmodel import select
 
 from ApiBioSample.app.models.biosample import BioSample, Comment
 from ApiBioSample.app.core.database import SessionDep
-from ApiBioSample.app.schemas.biosample import BiosampleSchema
+from ApiBioSample.app.schemas.biosample import BiosampleSchema, PaginatedBiosampleSchema
 
 router = APIRouter(
     prefix="/biosamples",
@@ -14,11 +16,22 @@ router = APIRouter(
 )
 
 
-@router.get("/")
-def read_biosamples(session: SessionDep):
-    statement = select(BioSample)
+@router.get("/", response_model=PaginatedBiosampleSchema)
+def read_biosamples(session: SessionDep, page_index: int = 1, limit: int = 10):
+    offset = (page_index - 1) * limit
+    statement = select(BioSample).offset(offset).limit(limit)
     biosamples = session.exec(statement).all()
-    return biosamples
+    count_statement = select(func.count()).select_from(BioSample)
+    total_count = session.execute(count_statement).scalar()
+    page_total = 1 + floor(total_count / limit)
+
+    return {
+        "data": biosamples,
+        "total": total_count,
+        "page_index": page_index,
+        "page_size": limit,
+        "page_total": page_total
+    }
 
 
 @router.get("/{biosample_id}", response_model=BiosampleSchema)
