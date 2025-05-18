@@ -1,7 +1,8 @@
 from sqlmodel import SQLModel, create_engine, Session
-from ApiBioSample.app.core.config import settings
+from fastapi.params import Depends
+from typing import Annotated
 
-from ApiBioSample.app.models.biosample import BioSample
+from ApiBioSample.app.core.config import settings
 
 engine = create_engine(
     settings.DATABASE_URL,
@@ -14,12 +15,8 @@ def get_db():
         yield session
 
 
+SessionDep = Annotated[Session, Depends(get_db)]
+
+
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
-
-
-BioSample_1 = BioSample(location="Paris", type="Food", date="today", operator="Dam")
-
-with Session(engine) as session:
-    session.add(BioSample_1)
-    session.commit()

@@ -1,10 +1,31 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from ApiBioSample.app.api.routes import biosample
-from ApiBioSample.app.core.config import (settings)
-from ApiBioSample.app.core.database import create_db_and_tables
+from ApiBioSample.app.core.database import create_db_and_tables, SessionDep
+from ApiBioSample.app.api.main import api_router
+from ApiBioSample.app.core.config import settings
+from ApiBioSample.app.models.biosample import BioSample
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_db_and_tables()
+    yield
+    biosample_1 = BioSample(location="Paris", type="Water", date="24/05/2025", operator="Dam")
+    biosample_2 = BioSample(location="London", type="Chocolate", date="12/03/2025", operator="Dam")
+    biosample_3 = BioSample(location="Madrid", type="salt", date="05/05/2025", operator="Dam")
+    biosample_4 = BioSample(location="Tokyo", type="pepper", date="today", operator="Dam")
+
+    SessionDep.add(biosample_1)
+    SessionDep.add(biosample_2)
+    SessionDep.add(biosample_3)
+    SessionDep.add(biosample_4)
+    SessionDep.commit()
+
+
+
+app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost:3000",
@@ -18,22 +39,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.on_event("startup")
-def on_startup():
-    create_db_and_tables()
-
-
-
-app.include_router(biosample.router, prefix=settings.API_V1_STR)
-
-
-@app.get("/")
-def root():
-    return {"hello": "world"}
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+app.include_router(api_router, prefix=settings.API_V1_STR)
