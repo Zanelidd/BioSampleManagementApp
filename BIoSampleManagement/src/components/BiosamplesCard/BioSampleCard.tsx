@@ -18,7 +18,7 @@ const BioSampleCard = ({biosample}: { biosample: BiosampleTypes }) => {
             })
         if (response.status === 200) {
             const newComment = await response.json()
-            setComments((prev) => [...prev, newComment]);
+            setComments((prev) => [newComment, ...prev,]);
             setComment("");
         } else {
             console.error("Server Error: " + response.status)
@@ -35,7 +35,7 @@ const BioSampleCard = ({biosample}: { biosample: BiosampleTypes }) => {
             <div className={style.commentsContainer}>
                 Comments :
                 <div className={style.existingComments}>
-                    {comments && comments.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).map((comment) => {
+                    {comments && comments.map((comment) => {
                             return <p key={comment.id}>{comment.content}</p>
                         }
                     )}</div>
