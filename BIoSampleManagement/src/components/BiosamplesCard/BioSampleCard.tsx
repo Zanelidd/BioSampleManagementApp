@@ -43,7 +43,7 @@ const BioSampleCard = ({biosample}: { biosample: BiosampleTypes }) => {
                         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                         .map((comment) => {
                                 const date = new Date(comment.created_at);
-                                return <p key={comment.id}> {date.toLocaleDateString()} : {comment.content}</p>
+                                return <p key={comment.id}> {date.toLocaleString()} : {comment.content}</p>
 
                             }
                         )}</div>
