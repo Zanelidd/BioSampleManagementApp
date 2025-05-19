@@ -8,20 +8,24 @@ const BioSampleCard = ({biosample}: { biosample: BiosampleTypes }) => {
 
     const handleAddComment = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/biosamples/${biosample.id}/comments?comment=${comment}`,
-            {
-                method: 'POST', headers: {
-                    "Content-Type": "application/json"
-
-                },
-                credentials: "include",
-            })
-        if (response.status === 200) {
-            const newComment = await response.json()
-            setComments((prev) => [newComment, ...prev,]);
-            setComment("");
+        if (!comment || comment === "") {
+            console.error("Please add a comment")
         } else {
-            console.error("Server Error: " + response.status)
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/biosamples/${biosample.id}/comments?comment=${comment}`,
+                {
+                    method: 'POST', headers: {
+                        "Content-Type": "application/json"
+
+                    },
+                    credentials: "include",
+                })
+            if (response.status === 200) {
+                const newComment = await response.json()
+                setComments((prev) => [newComment, ...prev,]);
+                setComment("");
+            } else {
+                console.error("Server Error: " + response.status)
+            }
         }
     }
 
@@ -35,10 +39,14 @@ const BioSampleCard = ({biosample}: { biosample: BiosampleTypes }) => {
             <div className={style.commentsContainer}>
                 Comments :
                 <div className={style.existingComments}>
-                    {comments && comments.map((comment) => {
-                            return <p key={comment.id}>{comment.content}</p>
-                        }
-                    )}</div>
+                    {comments && comments
+                        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                        .map((comment) => {
+                                const date = new Date(comment.created_at);
+                                return <p key={comment.id}> {date.toLocaleDateString()} : {comment.content}</p>
+
+                            }
+                        )}</div>
             </div>
             <form className={style.formComment} onSubmit={(e) =>
                 handleAddComment(e)}>

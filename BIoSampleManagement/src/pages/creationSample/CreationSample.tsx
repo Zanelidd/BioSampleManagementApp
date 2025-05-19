@@ -1,13 +1,12 @@
-
 import {useNavigate} from "react-router-dom";
 import {type FormEvent, useState} from "react";
-import type {createSampleType} from "../../types/Biosample.types.ts";
+import type {CreateSampleType} from "../../types/Biosample.types.ts";
 import style from "../../components/Form/form.module.css";
 
-const CreationSample =()=>{
+const CreationSample = () => {
 
     const navigate = useNavigate();
-    const [formData, setFormData] = useState<createSampleType>({
+    const [formData, setFormData] = useState<CreateSampleType>({
         location: "",
         type: "",
         operator: "",
@@ -15,23 +14,27 @@ const CreationSample =()=>{
     });
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/biosamples/`,{
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body:JSON.stringify(formData)
-        })
-        if (response.status === 200) {
-            setFormData({
-                location: "",
-                type: "",
-                operator: "",
-                date: "",
-            })
-            navigate("/")
+        if (!formData || formData.location === "" || formData.type === "" || formData.operator === "" || formData.date === "") {
+            console.error("Please add value")
         } else {
-            console.error("Error" + response.status)
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/biosamples/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+            if (response.status === 200) {
+                setFormData({
+                    location: "",
+                    type: "",
+                    operator: "",
+                    date: "",
+                })
+                navigate("/")
+            } else {
+                console.error("Error" + response.status)
+            }
         }
     }
 
