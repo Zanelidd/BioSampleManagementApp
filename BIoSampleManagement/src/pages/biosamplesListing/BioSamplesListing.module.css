@@ -53,3 +53,10 @@
     background-color: #444;
     transition: background-color 0.2s ease;
 }
+
+.paginationContainer{
+    display: flex;
+    width: 50%;
+    align-items: center;
+    justify-content: space-around;
+}

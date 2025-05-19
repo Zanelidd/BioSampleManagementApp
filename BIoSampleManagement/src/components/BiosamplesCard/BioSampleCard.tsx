@@ -35,7 +35,7 @@ const BioSampleCard = ({biosample}: { biosample: BiosampleTypes }) => {
             <div className={style.commentsContainer}>
                 Comments :
                 <div className={style.existingComments}>
-                    {comments && comments.map((comment) => {
+                    {comments && comments.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).map((comment) => {
                             return <p key={comment.id}>{comment.content}</p>
                         }
                     )}</div>
@@ -43,11 +43,11 @@ const BioSampleCard = ({biosample}: { biosample: BiosampleTypes }) => {
             <form className={style.formComment} onSubmit={(e) =>
                 handleAddComment(e)}>
                 <textarea
-                          value={comment}
-                          className={style.textComment}
-                          onChange={(e) => {
-                              setComment(e.target.value)
-                          }}/>
+                    value={comment}
+                    className={style.textComment}
+                    onChange={(e) => {
+                        setComment(e.target.value)
+                    }}/>
                 < button type="submit" className={style.commentButton}> Add
                     comment
                 </button>

@@ -4,16 +4,17 @@ export type BiosampleTypes = {
     location: string,
     operator: string,
     type: string,
-    comments: Array<comment>,
+    comments: Array<Comment>,
 }
 
-type comment ={
+type Comment ={
     id: number,
     content: string,
+    created_at: string,
     biosample_id: number
 }
 
-export type createSampleType ={
+export type CreateSampleType ={
     date: string,
     location: string,
     operator: string,

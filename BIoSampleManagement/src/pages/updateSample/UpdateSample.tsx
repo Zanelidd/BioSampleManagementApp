@@ -1,6 +1,6 @@
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {type FormEvent, useState} from "react";
-import type {createSampleType} from "../../types/Biosample.types.ts";
+import type {CreateSampleType} from "../../types/Biosample.types.ts";
 import style from "../../components/Form/form.module.css";
 
 const UpdateSample = () => {
@@ -10,7 +10,7 @@ const UpdateSample = () => {
     const params = useParams();
 
     const navigate = useNavigate();
-    const [formData, setFormData] = useState<createSampleType>({
+    const [formData, setFormData] = useState<CreateSampleType>({
         location: biosample.state.data.location,
         type: biosample.state.data.type,
         operator: biosample.state.data.operator,
@@ -32,7 +32,7 @@ const UpdateSample = () => {
                 operator: "",
                 date: "",
             })
-            navigate("/")
+            navigate(-1)
         } else {
             console.error("Error" + response.statusText)
         }
