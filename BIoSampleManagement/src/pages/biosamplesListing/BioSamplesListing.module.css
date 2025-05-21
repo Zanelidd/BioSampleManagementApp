@@ -31,11 +31,13 @@
     background-color: #3c3c3c;
 }
 
+
 .table th,
 .table td {
     padding: 12px 20px;
     text-align: left;
     font-size: 14px;
+    cursor: pointer;
 }
 
 .table th {

@@ -11,10 +11,28 @@ const BioSamplesListing = () => {
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const [pageTotal, setPageTotal] = useState(0);
+    const [sortBy, setSortBy] = useState<string>("created_at");
+    const [sortOrder, setSortOrder] = useState<string>("desc");
 
+    const sortList = (column :string) => {
+        if (sortBy === column) {
+            const newOrder = sortOrder === "desc" ? 'asc' : 'desc'
+            setSortOrder(newOrder)
+        }else{
+            setSortBy(column)
+            setSortOrder('asc')
+        }
+
+    }
+
+    const arrow = (col: string) => {
+        if (sortBy !== col) return null
+
+        return <span>{sortOrder === 'asc' ? '↑' : '↓'}  </span>
+    }
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/biosamples?page_index=${page}&limit=${limit}`,
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/biosamples?page_index=${page}&limit=${limit}&sort_by=${sortBy}&sort_order=${sortOrder}`,
             {
                 method: 'GET', headers: {
                     "Content-Type": "application/json"
@@ -27,19 +45,22 @@ const BioSamplesListing = () => {
                 setPageTotal(res.page_total)
             })
             .catch((error: Error) => console.error(error))
-    }, [page, limit]);
+    }, [page, limit, sortBy, sortOrder]);
 
+
+    console.log(sortBy)
+    console.log(sortOrder)
     return <div className={style.pageContainer}>
         <h1>Bio Sample Management Mini App</h1>
         <div className={style.tableContainer}>
             <table className={style.table}>
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Location</th>
-                    <th>Type</th>
-                    <th>Date</th>
-                    <th>Operator</th>
+                    <th onClick={() => sortList("id")}>ID {arrow("id")}</th>
+                    <th onClick={() => sortList("location")}>Location {arrow("location")}</th>
+                    <th onClick={() => sortList("type")}>Type {arrow("type")}</th>
+                    <th onClick={() => sortList("date")}>Date {arrow("date")}</th>
+                    <th onClick={() => sortList("operator")}>Operator {arrow("operator")}</th>
                 </tr>
                 </thead>
                 <tbody>
