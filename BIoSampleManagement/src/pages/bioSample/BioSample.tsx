@@ -9,6 +9,7 @@ const BioSample = () => {
     const params = useParams()
     const navigate = useNavigate();
     const [biosample, setBiosample] = useState<BiosampleTypes>()
+    const [isDelete, setIsDelete] = useState<boolean>(false)
 
     useEffect(() => {
         fetch(`${import.meta.env.VITE_BACKEND_URL}/biosamples/${params.BioSample_Id}`,
@@ -32,25 +33,35 @@ const BioSample = () => {
                 credentials: "include"
             })
         if (response.status === 204) {
-            navigate("/")
+            setIsDelete(true)
         } else {
             console.error(response.statusText)
         }
     }
 
 
-    return <div className={style.sampleContainer}>
-        {biosample && <BioSampleCard biosample={biosample} key={params.BioSample_Id}/>}
-        <div className={style.buttonContainer}>
-            <button onClick={() => {
-                navigate(`update`, {state: {data: biosample}});
-            }}>Update Sample
-            </button>
-            <button onClick={handleDelete}>Delete Sample
-            </button>
-        </div>
-    </div>;
+    return <>
+        {isDelete ? <div className={style.sampleContainer}>
+                <p>The sample has been deleted! </p>
+                <button onClick={() => navigate("/")}>Return to listing</button>
+            </div>
+            :
+            <div className={style.sampleContainer}>
+                {biosample && <BioSampleCard biosample={biosample} key={params.BioSample_Id}/>}
+                <div className={style.buttonContainer}>
+                    <button onClick={() => {
+                        navigate(`update`, {state: {data: biosample}});
+                    }}>Update Sample
+                    </button>
+                    <button onClick={handleDelete}>Delete Sample
+                    </button>
+                </div>
+            </div>
 
+        }
+
+    </>
 }
+
 
 export default BioSample
