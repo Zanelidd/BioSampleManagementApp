@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from ApiBioSample.app.api.routes import biosample
+from app.api.routes import biosample
 
 api_router = APIRouter()
 

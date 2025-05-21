@@ -2,7 +2,7 @@ from sqlmodel import SQLModel, create_engine, Session
 from fastapi.params import Depends
 from typing import Annotated
 
-from ApiBioSample.app.core.config import settings
+from app.core.config import settings
 
 
 engine = create_engine(

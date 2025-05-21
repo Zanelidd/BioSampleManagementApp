@@ -1,10 +1,9 @@
 import random
 from datetime import datetime, timedelta
-from sqlmodel import  Session, SQLModel, create_engine, select
+from sqlmodel import  Session, SQLModel, create_engine, select,func
 from faker import Faker
-from sqlalchemy import  func
 
-from ApiBioSample.app.models.biosample import BioSample,Comment
+from app.models.biosample import (BioSample,Comment)
 
 fake = Faker()
 
@@ -15,10 +14,8 @@ COMMENT_MIN = 0
 COMMENT_MAX = 5
 SQLITE_URL = f"sqlite:///data/{DB_FILE}"
 
+engine = create_engine(SQLITE_URL, echo=False)
 
-DATABASE_URL = "sqlite:///data/database.db"
-engine = create_engine(DATABASE_URL, echo=False)
-SQLModel.metadata.create_all(engine)
 
 def generate_fake_data():
     sample_types = ["Fries", "Water", "Chocolate", "Flour", "Wine", "Potato", "Puree", "Pea", "Plasma", "Tomato"]

@@ -1,14 +1,13 @@
-from math import floor
+from math import  ceil
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Response
 from sqlalchemy.orm import joinedload
-from sqlalchemy import func
-from sqlmodel import select
+from sqlmodel import select, func
 
-from ApiBioSample.app.models.biosample import BioSample, Comment
-from ApiBioSample.app.core.database import SessionDep
-from ApiBioSample.app.schemas.biosample import BiosampleSchema, PaginatedBiosampleSchema
+from app.models.biosample import BioSample, Comment
+from app.core.database import SessionDep
+from app.schemas.biosample import BiosampleSchema, PaginatedBiosampleSchema
 
 router = APIRouter(
     prefix="/biosamples",
@@ -17,13 +16,24 @@ router = APIRouter(
 
 
 @router.get("/", response_model=PaginatedBiosampleSchema)
-def read_biosamples(session: SessionDep, page_index: int = 1, limit: int = 10):
+def read_biosamples(session: SessionDep, page_index: int = 1, limit: int = 10, sort_by: str = None,
+                    sort_order: str = None):
+    valid_columns = ["id", "date", "location", "type", "operator","created_at","updated_at"]
+    valid_orders = ["asc", "desc"]
+
     offset = (page_index - 1) * limit
-    statement = select(BioSample).offset(offset).limit(limit)
+
+    if sort_by in valid_columns and sort_order in valid_orders:
+        column = getattr(BioSample, sort_by)
+        order = column.asc() if sort_order == 'asc' else column.desc()
+        statement = select(BioSample).order_by(order).offset(offset).limit(limit)
+    else:
+        statement = select(BioSample).offset(offset).limit(limit)
+
     biosamples = session.exec(statement).all()
     count_statement = select(func.count()).select_from(BioSample)
     total_count = session.execute(count_statement).scalar()
-    page_total = 1 + floor(total_count / limit)
+    page_total = ceil(total_count / limit)
 
     return {
         "data": biosamples,
