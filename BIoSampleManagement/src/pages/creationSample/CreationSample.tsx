@@ -41,19 +41,19 @@ const CreationSample = () => {
     return <div className={style.formContainer}>
         <form onSubmit={handleSubmit} className={style.form}>
             <label>Location :
-                <input placeholder={"Location"} value={formData.location}
+                <input required placeholder={"Location"} value={formData.location}
                        onChange={(e) => setFormData({...formData, location: e.target.value})}></input>
             </label>
             <label>Type :
-                <input placeholder={"Type"} value={formData.type}
+                <input required placeholder={"Type"} value={formData.type}
                        onChange={(e) => setFormData({...formData, type: e.target.value})}/>
             </label>
             <label>Date :
-                <input type={"date"} placeholder={"Date"} value={formData.date}
+                <input required type={"date"} placeholder={"Date"} value={formData.date}
                        onChange={(e) => setFormData({...formData, date: e.target.value})}/>
             </label>
             <label>Operator :
-                <input placeholder={"Operator"} value={formData.operator}
+                <input required placeholder={"Operator"} value={formData.operator}
 
                        onChange={(e) => setFormData({...formData, operator: e.target.value})}/>
             </label>
