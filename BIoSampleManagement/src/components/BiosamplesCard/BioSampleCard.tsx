@@ -51,6 +51,7 @@ const BioSampleCard = ({biosample}: { biosample: BiosampleTypes }) => {
             <form className={style.formComment} onSubmit={(e) =>
                 handleAddComment(e)}>
                 <textarea
+                    required
                     value={comment}
                     className={style.textComment}
                     onChange={(e) => {
