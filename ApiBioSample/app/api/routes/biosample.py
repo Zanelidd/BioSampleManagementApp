@@ -25,43 +25,47 @@ def read_biosamples(session: SessionDep, datas: GetSampleType, ):
 
     filters: List[BinaryExpression] = []
 
-    if datas.filter_type is not None:
-        for key, value in datas.filter_type.model_dump().items():
-            if value is not None and str(value).strip() != "":
-                column_filtered = getattr(BioSample, key, None)
+    try:
+        if datas.filter_type is not None:
+            for key, value in datas.filter_type.model_dump().items():
+                if value is not None and str(value).strip() != "":
+                    column_filtered = getattr(BioSample, key, None)
 
-                if column_filtered is not None:
-                    clause = column_filtered == value
-                    if isinstance(clause, BinaryExpression):
-                        filters.append(clause)
+                    if column_filtered is not None:
+                        clause = column_filtered == value
+                        if isinstance(clause, BinaryExpression):
+                            filters.append(clause)
 
-    if datas.sort_by in valid_columns and datas.sort_order in valid_orders:
-        column = getattr(BioSample, datas.sort_by)
-        if column is not None:
-            order = column.asc() if datas.sort_order == 'asc' else column.desc()
+        if datas.sort_by in valid_columns and datas.sort_order in valid_orders:
+            column = getattr(BioSample, datas.sort_by)
+            if column is not None:
+                order = column.asc() if datas.sort_order == 'asc' else column.desc()
 
-    else:
-        order = None
+        else:
+            order = None
 
-    statement = select(BioSample)
-    if order is not None:
-        statement = statement.order_by(order)
-    if filters:
-        statement = statement.where(and_(*filters))
+        statement = select(BioSample)
+        if order is not None:
+            statement = statement.order_by(order)
+        if filters:
+            statement = statement.where(and_(*filters))
 
-    statement = statement.offset(offset).limit(datas.limit)
-    biosamples = session.exec(statement).all()
-    count_statement = select(func.count()).select_from(BioSample)
-    total_count = session.execute(count_statement).scalar()
-    page_total = ceil(total_count / datas.limit)
+        statement = statement.offset(offset).limit(datas.limit)
+        biosamples = session.exec(statement).all()
+        count_statement = select(func.count()).select_from(BioSample)
+        total_count = session.execute(count_statement).scalar()
+        page_total = ceil(total_count / datas.limit)
 
-    return {
-        "data": biosamples,
-        "total": total_count,
-        "page_index": datas.page_index,
-        "page_size": datas.limit,
-        "page_total": page_total
-    }
+        return {
+            "data": biosamples,
+            "total": total_count,
+            "page_index": datas.page_index,
+            "page_size": datas.limit,
+            "page_total": page_total
+        }
+    except:
+        raise HTTPException(status_code=404, detail="Biosample not found")
+
 
 
 @router.get("/operators")
