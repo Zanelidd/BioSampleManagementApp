@@ -2,11 +2,9 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from ApiBioSample.app.core.database import create_db_and_tables, SessionDep
-from ApiBioSample.app.api.main import api_router
-from ApiBioSample.app.core.config import settings
-from ApiBioSample.app.models.biosample import BioSample
-from ApiBioSample.data.fakedata import generate_fake_data, check_data
+from app.api.main import api_router
+from app.core.config import settings
+from data.fakedata import generate_fake_data, check_data
 
 
 @asynccontextmanager
@@ -15,12 +13,6 @@ async def lifespan(app: FastAPI):
     check_data()
 
     yield
-
-
-
-
-
-
 app = FastAPI(lifespan=lifespan)
 
 origins = [

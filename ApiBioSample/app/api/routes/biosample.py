@@ -6,9 +6,9 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 from sqlmodel import select
 
-from ApiBioSample.app.models.biosample import BioSample, Comment
-from ApiBioSample.app.core.database import SessionDep
-from ApiBioSample.app.schemas.biosample import BiosampleSchema, PaginatedBiosampleSchema
+from app.models.biosample import BioSample, Comment
+from app.core.database import SessionDep
+from app.schemas.biosample import BiosampleSchema, PaginatedBiosampleSchema
 
 router = APIRouter(
     prefix="/biosamples",

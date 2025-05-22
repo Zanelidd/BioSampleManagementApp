@@ -4,7 +4,7 @@ from sqlmodel import  Session, SQLModel, create_engine, select
 from faker import Faker
 from sqlalchemy import  func
 
-from ApiBioSample.app.models.biosample import BioSample,Comment
+from app.models.biosample import BioSample,Comment
 
 fake = Faker()
 
