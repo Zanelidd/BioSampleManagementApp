@@ -1,9 +1,9 @@
 export type BiosampleTypes = {
     id: number,
     date: string,
-    location: string,
-    operator: string,
-    type: string,
+    locations: string,
+    operators: string,
+    types: string,
     comments: Array<Comment>,
 }
 
@@ -16,8 +16,8 @@ type Comment ={
 
 export type CreateSampleType ={
     date: string,
-    location: string,
-    operator: string,
-    type: string,
+    locations: string,
+    operators: string,
+    types: string,
 }
 

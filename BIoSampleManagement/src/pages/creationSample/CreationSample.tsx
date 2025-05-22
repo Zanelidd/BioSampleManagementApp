@@ -7,17 +7,17 @@ const CreationSample = () => {
 
     const navigate = useNavigate();
     const [formData, setFormData] = useState<CreateSampleType>({
-        location: "",
-        type: "",
-        operator: "",
+        locations: "",
+        types: "",
+        operators: "",
         date: "",
     });
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (!formData || formData.location === "" || formData.type === "" || formData.operator === "" || formData.date === "") {
+        if (!formData || formData.locations === "" || formData.types === "" || formData.operators === "" || formData.date === "") {
             console.error("Please add value")
         } else {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/biosamples/`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/biosamples/biosample`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -26,9 +26,9 @@ const CreationSample = () => {
             })
             if (response.status === 200) {
                 setFormData({
-                    location: "",
-                    type: "",
-                    operator: "",
+                    locations: "",
+                    types: "",
+                    operators: "",
                     date: "",
                 })
                 navigate("/")
@@ -41,21 +41,21 @@ const CreationSample = () => {
     return <div className={style.formContainer}>
         <form onSubmit={handleSubmit} className={style.form}>
             <label>Location :
-                <input required placeholder={"Location"} value={formData.location}
-                       onChange={(e) => setFormData({...formData, location: e.target.value})}></input>
+                <input required placeholder={"Location"} value={formData.locations}
+                       onChange={(e) => setFormData({...formData, locations: e.target.value})}></input>
             </label>
             <label>Type :
-                <input required placeholder={"Type"} value={formData.type}
-                       onChange={(e) => setFormData({...formData, type: e.target.value})}/>
+                <input required placeholder={"Type"} value={formData.types}
+                       onChange={(e) => setFormData({...formData, types: e.target.value})}/>
             </label>
             <label>Date :
                 <input required type={"date"} placeholder={"Date"} value={formData.date}
                        onChange={(e) => setFormData({...formData, date: e.target.value})}/>
             </label>
             <label>Operator :
-                <input required placeholder={"Operator"} value={formData.operator}
+                <input required placeholder={"Operator"} value={formData.operators}
 
-                       onChange={(e) => setFormData({...formData, operator: e.target.value})}/>
+                       onChange={(e) => setFormData({...formData, operators: e.target.value})}/>
             </label>
             <button type={"submit"}>Create sample</button>
         </form>

@@ -32,10 +32,10 @@ const BioSampleCard = ({biosample}: { biosample: BiosampleTypes }) => {
     return <>
         <div className={style.cardContainer}>
             <h2> Sample details</h2>
-            <p>Location : {biosample.location}</p>
-            <p> Type : {biosample.type}</p>
+            <p>Location : {biosample.locations}</p>
+            <p> Type : {biosample.types}</p>
             <p> Date : {biosample.date}</p>
-            <p> Operator : {biosample.operator}</p>
+            <p> Operator : {biosample.operators}</p>
             <div className={style.commentsContainer}>
                 Comments :
                 <div className={style.existingComments}>
