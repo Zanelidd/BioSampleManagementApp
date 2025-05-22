@@ -1,12 +1,10 @@
 import random
 from datetime import datetime, timedelta
-from sqlmodel import  Session, SQLModel, create_engine, select,func
+from sqlmodel import Session, create_engine, select, func, inspect
 from faker import Faker
-
-from app.models.biosample import (BioSample,Comment)
+from app.models.biosample import (BioSample, Comment)
 
 fake = Faker()
-
 
 DB_FILE = "database.db"
 SAMPLE_COUNT = 100
@@ -28,7 +26,6 @@ def generate_fake_data():
 
             fake_date = fake.date_between(start_date="-2y", end_date="today")
 
-
             sample = BioSample(
                 created_at=datetime.now() - timedelta(days=random.randint(1, 700)),
                 updated_at=datetime.now() - timedelta(days=random.randint(0, 30)),
@@ -39,7 +36,6 @@ def generate_fake_data():
             )
             session.add(sample)
             session.commit()
-
 
             comment_count = random.randint(COMMENT_MIN, COMMENT_MAX)
             for _ in range(comment_count):
@@ -55,15 +51,20 @@ def generate_fake_data():
 
 
 def check_data():
+    inspector = inspect(engine)
+    tables = inspector.get_table_names()
+
+    if "biosample" not in [table.lower() for table in tables]:
+        print("No sample table found")
+        return False
+
     with Session(engine) as session:
 
         sample_count = session.exec(select(func.count(BioSample.id))).one()
         print(f"Nombre total d'échantillons: {sample_count}")
 
-
         comment_count = session.exec(select(func.count(Comment.id))).one()
         print(f"Nombre total de commentaires: {comment_count}")
-
 
         samples = session.exec(select(BioSample).limit(5)).all()
         for sample in samples:
@@ -73,7 +74,6 @@ def check_data():
             print(f"  Date: {sample.date}")
             print(f"  Opérateur: {sample.operator}")
 
-
             comments = session.exec(select(Comment).where(Comment.biosample_id == sample.id)).all()
             print(f"  Nombre de commentaires: {len(comments)}")
             for i, comment in enumerate(comments[:3]):
@@ -81,3 +81,4 @@ def check_data():
 
             if len(comments) > 3:
                 print(f"    ... et {len(comments) - 3} autre(s) commentaire(s)")
+        return True
