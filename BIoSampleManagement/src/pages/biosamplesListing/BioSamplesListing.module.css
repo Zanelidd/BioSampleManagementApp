@@ -86,6 +86,11 @@
     align-items: center;
     justify-content: space-around;
 }
+
+.addButton {
+    align-self: end;
+}
+
 .addButton:hover {
-        background-color: #03a9f4;
+    background-color: #03a9f4;
 }
