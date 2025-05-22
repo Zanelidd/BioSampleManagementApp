@@ -5,7 +5,7 @@ const Filter = ({toSelect, dispatch}: {
     dispatch: Dispatch<{ type: string, payload?: any }>
 }) => {
 
-    const [dataSelect, setDataSelect] = useState<string[]>([]);
+    const [dataSelect, setDataSelect] = useState<Array<string>>([]);
     useEffect(() => {
             fetch(`${import.meta.env.VITE_BACKEND_URL}/biosamples/${toSelect}`, {
                 method: "GET",
@@ -17,7 +17,6 @@ const Filter = ({toSelect, dispatch}: {
                 .then((data) => setDataSelect(data))
                 .catch((error) => console.error(error))
         }
-
         , []);
 
     return <>

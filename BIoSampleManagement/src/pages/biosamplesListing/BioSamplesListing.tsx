@@ -5,7 +5,6 @@ import {useNavigate} from "react-router-dom";
 import Filter from "../../components/filter/Filter.tsx";
 
 
-
 const BioSamplesListing = () => {
 
     const navigate = useNavigate();
@@ -35,9 +34,9 @@ const BioSamplesListing = () => {
     }
 
     const initialState = {
-        locations: {id: "locations", selected: ""},
-        types: {id: "types", selected: ""},
-        operators: {id: "operators", selected: ""}
+        locations: "",
+        types: "",
+        operators: ""
     }
 
     type stateType = typeof initialState
@@ -45,11 +44,11 @@ const BioSamplesListing = () => {
     const reducer = (state: stateType, action: { type: string, payload?: any }) => {
             switch (action.type) {
                 case "locations":
-                    return {...state, locations: {id: action.type, selected: action.payload}};
+                    return {...state, locations: action.payload}
                 case "types":
-                    return {...state, types: {id: action.type, selected: action.payload}};
+                    return {...state, types: action.payload}
                 case "operators":
-                    return {...state, operators: {id: action.type, selected: action.payload}}
+                    return {...state, operators: action.payload}
                 case "reset":
                     return initialState
                 default:
@@ -59,6 +58,7 @@ const BioSamplesListing = () => {
     ;
 
     const [state, dispatch] = useReducer(reducer, initialState);
+
     const resetFilter = () => {
         dispatch({type: "reset"})
     }
@@ -71,7 +71,13 @@ const BioSamplesListing = () => {
                         "Content-Type": "application/json"
                     },
                     credentials: "include",
-                    body: JSON.stringify({filter_type : state, page_index: page, limit: limit, sort_by: sortBy, sort_order: sortOrder})
+                    body: JSON.stringify({
+                        filter_type: state,
+                        page_index: page,
+                        limit: limit,
+                        sort_by: sortBy,
+                        sort_order: sortOrder
+                    })
                 },
             )
                 .then((res) => res.json())
@@ -84,7 +90,6 @@ const BioSamplesListing = () => {
         },
         [page, limit, sortBy, sortOrder, state]
     )
-    console.log("biosamples",biosamples)
 
     return <div className={style.pageContainer}>
         <h1>Bio Sample Management Mini App</h1>
