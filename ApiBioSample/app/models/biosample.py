@@ -15,10 +15,10 @@ class BioSample(SQLModel, table=True):
     updated_at: datetime = Field(
         sa_column=Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
     )
-    location: str
-    type: str
+    locations: str
+    types: str
     date: str
-    operator: str
+    operators: str
     comments: list["Comment"] = Relationship(back_populates="biosample")
 
 

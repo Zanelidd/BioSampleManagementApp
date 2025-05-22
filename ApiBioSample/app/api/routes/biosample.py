@@ -1,13 +1,14 @@
-from math import  ceil
+from math import ceil
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Response
 from sqlalchemy.orm import joinedload
-from sqlmodel import select, func
+from sqlalchemy.sql.elements import BinaryExpression
+from sqlmodel import select, func, distinct, and_
 
 from app.models.biosample import BioSample, Comment
 from app.core.database import SessionDep
-from app.schemas.biosample import BiosampleSchema, PaginatedBiosampleSchema
+from app.schemas.biosample import BiosampleSchema, PaginatedBiosampleSchema, GetSampleType
 
 router = APIRouter(
     prefix="/biosamples",
@@ -15,33 +16,76 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=PaginatedBiosampleSchema)
-def read_biosamples(session: SessionDep, page_index: int = 1, limit: int = 10, sort_by: str = None,
-                    sort_order: str = None):
-    valid_columns = ["id", "date", "location", "type", "operator","created_at","updated_at"]
+@router.post("/", response_model=PaginatedBiosampleSchema)
+def read_biosamples(session: SessionDep, datas: GetSampleType, ):
+    valid_columns = ["id", "date", "locations", "types", "operators", "created_at", "updated_at"]
     valid_orders = ["asc", "desc"]
 
-    offset = (page_index - 1) * limit
+    offset = (datas.page_index - 1) * datas.limit
 
-    if sort_by in valid_columns and sort_order in valid_orders:
-        column = getattr(BioSample, sort_by)
-        order = column.asc() if sort_order == 'asc' else column.desc()
-        statement = select(BioSample).order_by(order).offset(offset).limit(limit)
+    filters: List[BinaryExpression] = []
+
+    if datas.filter_type is not None:
+        for key, value in datas.filter_type.model_dump().items():
+            selected = value.get("selected")
+
+            if selected is not None and str(selected).strip() != "":
+                column_filtered = getattr(BioSample, key, None)
+
+                if column_filtered is not None:
+                    clause = column_filtered == selected
+                    if isinstance(clause, BinaryExpression):
+                        filters.append(clause)
+
+    if datas.sort_by in valid_columns and datas.sort_order in valid_orders:
+        print(f"sort_by",datas.sort_by)
+        column = getattr(BioSample, datas.sort_by)
+        if column is not None:
+            order = column.asc() if datas.sort_order == 'asc' else column.desc()
+
     else:
-        statement = select(BioSample).offset(offset).limit(limit)
+        order = None
 
+    statement = select(BioSample)
+    if order is not None:
+        statement = statement.order_by(order)
+    if filters:
+        statement = statement.where(and_(*filters))
+
+    statement = statement.offset(offset).limit(datas.limit)
     biosamples = session.exec(statement).all()
     count_statement = select(func.count()).select_from(BioSample)
     total_count = session.execute(count_statement).scalar()
-    page_total = ceil(total_count / limit)
+    page_total = ceil(total_count / datas.limit)
 
     return {
         "data": biosamples,
         "total": total_count,
-        "page_index": page_index,
-        "page_size": limit,
+        "page_index": datas.page_index,
+        "page_size": datas.limit,
         "page_total": page_total
     }
+
+
+@router.get("/operators")
+def get_list_of_operator(session: SessionDep) -> List[str]:
+    statement = select(distinct(BioSample.operators))
+    result = session.execute(statement).scalars().all()
+    return result
+
+
+@router.get("/locations")
+def get_list_of_operator(session: SessionDep) -> List[str]:
+    statement = select(distinct(BioSample.locations))
+    result = session.execute(statement).scalars().all()
+    return result
+
+
+@router.get("/types")
+def get_list_of_operator(session: SessionDep) -> List[str]:
+    statement = select(distinct(BioSample.types))
+    result = session.execute(statement).scalars().all()
+    return result
 
 
 @router.get("/{biosample_id}", response_model=BiosampleSchema)
@@ -64,7 +108,7 @@ def get_biosample_comments(biosample_id: int, session: SessionDep):
     return comments
 
 
-@router.post("/")
+@router.post("/biosample")
 def add_biosample(biosample: BioSample, session: SessionDep):
     session.add(biosample)
     session.commit()

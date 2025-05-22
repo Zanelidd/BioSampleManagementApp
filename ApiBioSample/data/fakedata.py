@@ -29,10 +29,10 @@ def generate_fake_data():
             sample = BioSample(
                 created_at=datetime.now() - timedelta(days=random.randint(1, 700)),
                 updated_at=datetime.now() - timedelta(days=random.randint(0, 30)),
-                location=random.choice(locations),
-                type=random.choice(sample_types),
+                locations=random.choice(locations),
+                types=random.choice(sample_types),
                 date=fake_date.strftime("%Y-%m-%d"),
-                operator=random.choice(operators)
+                operators=random.choice(operators)
             )
             session.add(sample)
             session.commit()
@@ -53,7 +53,6 @@ def generate_fake_data():
 def check_data():
     inspector = inspect(engine)
     tables = inspector.get_table_names()
-
     if "biosample" not in [table.lower() for table in tables]:
         print("No sample table found")
         return False
@@ -69,10 +68,10 @@ def check_data():
         samples = session.exec(select(BioSample).limit(5)).all()
         for sample in samples:
             print(f"\nÉchantillon ID: {sample.id}")
-            print(f"  Type: {sample.type}")
-            print(f"  Lieu: {sample.location}")
+            print(f"  Type: {sample.types}")
+            print(f"  Lieu: {sample.locations}")
             print(f"  Date: {sample.date}")
-            print(f"  Opérateur: {sample.operator}")
+            print(f"  Opérateur: {sample.operators}")
 
             comments = session.exec(select(Comment).where(Comment.biosample_id == sample.id)).all()
             print(f"  Nombre de commentaires: {len(comments)}")
