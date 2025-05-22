@@ -26,14 +26,12 @@ class PaginatedBiosampleSchema(BaseModel):
     page_total: int
 
 
-class Selection(BaseModel):
-    id : str
-    selected : str
+
 
 class FilterType(BaseModel):
-    locations: Selection
-    types: Selection
-    operators: Selection
+    locations: str
+    types: str
+    operators: str
     
     
 class GetSampleType(BaseModel):

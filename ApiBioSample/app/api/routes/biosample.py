@@ -27,18 +27,15 @@ def read_biosamples(session: SessionDep, datas: GetSampleType, ):
 
     if datas.filter_type is not None:
         for key, value in datas.filter_type.model_dump().items():
-            selected = value.get("selected")
-
-            if selected is not None and str(selected).strip() != "":
+            if value is not None and str(value).strip() != "":
                 column_filtered = getattr(BioSample, key, None)
 
                 if column_filtered is not None:
-                    clause = column_filtered == selected
+                    clause = column_filtered == value
                     if isinstance(clause, BinaryExpression):
                         filters.append(clause)
 
     if datas.sort_by in valid_columns and datas.sort_order in valid_orders:
-        print(f"sort_by",datas.sort_by)
         column = getattr(BioSample, datas.sort_by)
         if column is not None:
             order = column.asc() if datas.sort_order == 'asc' else column.desc()
