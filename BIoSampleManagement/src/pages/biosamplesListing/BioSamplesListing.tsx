@@ -88,6 +88,23 @@ const BioSamplesListing = () => {
 
     return <div className={style.pageContainer}>
         <h1>Bio Sample Management Mini App</h1>
+        <div className={style.filterContainer}>
+            <label>
+                <Filter toSelect={"operators"} dispatch={dispatch}/>
+            </label>
+            <label>
+                <Filter toSelect={"locations"} dispatch={dispatch}/>
+            </label>
+            <label>
+                <Filter toSelect={"types"} dispatch={dispatch}/>
+            </label>
+            <label>
+                <button onClick={() => {
+                    resetFilter()
+                }}>Reset filters
+                </button>
+            </label>
+        </div>
         <div className={style.tableContainer}>
             <table className={style.table}>
                 <thead>
@@ -133,24 +150,8 @@ const BioSamplesListing = () => {
                 </select>
 
             </div>
-            <button onClick={() => navigate("/create")}>Add a new sample</button>
-            <div className={style.filterContainer}>
-                <label>
-                    <Filter toSelect={"operators"} dispatch={dispatch}/>
-                </label>
-                <label>
-                    <Filter toSelect={"locations"} dispatch={dispatch}/>
-                </label>
-                <label>
-                    <Filter toSelect={"types"} dispatch={dispatch}/>
-                </label>
-                <label>
-                    <button onClick={() => {
-                        resetFilter()
-                    }}>Reset filters
-                    </button>
-                </label>
-            </div>
+            <button className={style.addButton} onClick={() => navigate("/create")}>Add a new sample</button>
+
         </div>
     </div>
 

@@ -1,7 +1,11 @@
 .pageContainer {
-    max-width: 900px;
+    max-width: 1024px;
     margin: 60px auto;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .pageContainer h1 {
@@ -9,13 +13,32 @@
     margin-bottom: 40px;
     font-weight: bold;
 }
-.tableContainer {
+
+.filterContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: 1rem;
     width: 100%;
-    height: 90vh;
+}
+
+.filterContainer label {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around
+}
+
+.filterContainer button:hover {
+    background-color: #03a9f4;
+}
+
+.tableContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    margin: 2rem
 }
 
 .table {
@@ -25,6 +48,7 @@
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+    margin: 2rem
 }
 
 .table thead {
@@ -56,9 +80,12 @@
     transition: background-color 0.2s ease;
 }
 
-.paginationContainer{
+.paginationContainer {
     display: flex;
     width: 50%;
     align-items: center;
     justify-content: space-around;
+}
+.addButton:hover {
+        background-color: #03a9f4;
 }
