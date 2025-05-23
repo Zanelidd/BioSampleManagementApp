@@ -29,9 +29,9 @@ class PaginatedBiosampleSchema(BaseModel):
 
 
 class FilterType(BaseModel):
-    locations: str
-    types: str
-    operators: str
+    locations: List[str]
+    types: List[str]
+    operators: List[str]
     
     
 class GetSampleType(BaseModel):
