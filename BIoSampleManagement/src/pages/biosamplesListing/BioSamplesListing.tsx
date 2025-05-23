@@ -1,5 +1,5 @@
 import {useEffect, useReducer, useState} from "react";
-import type {BiosampleTypes} from "../../types/Biosample.types.ts";
+import type {BiosampleTypes, stateType} from "../../types/Biosample.types.ts";
 import style from "./BioSamplesListing.module.css"
 import {useNavigate} from "react-router-dom";
 import Filter from "../../components/filter/Filter.tsx";
@@ -33,22 +33,27 @@ const BioSamplesListing = () => {
         return <span>{sortOrder === 'asc' ? '↑' : '↓'}  </span>
     }
 
-    const initialState = {
-        locations: "",
-        types: "",
-        operators: ""
+    const initialState: stateType = {
+        locations: [],
+        types: [],
+        operators: []
     }
 
-    type stateType = typeof initialState
 
     const reducer = (state: stateType, action: { type: string, payload?: any }) => {
             switch (action.type) {
                 case "locations":
-                    return {...state, locations: action.payload}
+                    return {...state, locations: [...state.locations, ...action.payload]}
                 case "types":
-                    return {...state, types: action.payload}
+                    return {...state, types: [...state.types, ...action.payload]}
                 case "operators":
-                    return {...state, operators: action.payload}
+                    return {...state, operators: [...state.operators, ...action.payload]}
+                case "clear_locations":
+                    return {...state, locations: []}
+                case "clear_types":
+                    return {...state, types: []}
+                case "clear_operators":
+                    return {...state, operators: []}
                 case "reset":
                     return initialState
                 default:
@@ -82,7 +87,6 @@ const BioSamplesListing = () => {
             )
                 .then((res) => res.json())
                 .then((res) => {
-                    console.log("res:", res);
                     setBioSamples(res.data)
                     setPageTotal(res.page_total)
                 })
@@ -95,20 +99,19 @@ const BioSamplesListing = () => {
         <h1>Bio Sample Management Mini App</h1>
         <div className={style.filterContainer}>
             <label>
-                <Filter toSelect={"operators"} dispatch={dispatch}/>
+                <Filter toSelect={"operators"} dispatch={dispatch}  state={state}/>
             </label>
             <label>
-                <Filter toSelect={"locations"} dispatch={dispatch}/>
+                <Filter toSelect={"locations"} dispatch={dispatch}  state={state}/>
             </label>
             <label>
-                <Filter toSelect={"types"} dispatch={dispatch}/>
+                <Filter toSelect={"types"} dispatch={dispatch}  state={state}/>
             </label>
-            <label>
-                <button onClick={() => {
-                    resetFilter()
-                }}>Reset filters
-                </button>
-            </label>
+            <button onClick={() => {
+                resetFilter()
+            }}>Reset filters
+            </button>
+
         </div>
         <div className={style.tableContainer}>
             <table className={style.table}>

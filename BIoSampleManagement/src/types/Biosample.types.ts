@@ -1,12 +1,3 @@
-export type BiosampleTypes = {
-    id: number,
-    date: string,
-    locations: string,
-    operators: string,
-    types: string,
-    comments: Array<Comment>,
-}
-
 type Comment ={
     id: number,
     content: string,
@@ -21,3 +12,15 @@ export type CreateSampleType ={
     types: string,
 }
 
+export interface BiosampleTypes extends CreateSampleType {
+    id: number,
+    comments: Array<Comment>,
+}
+
+export interface stateType  {
+    locations : Array<string>,
+    types : Array<string>,
+    operators : Array<string>,
+}
+
+export type FilterKey = "locations" | "types" | "operators";
